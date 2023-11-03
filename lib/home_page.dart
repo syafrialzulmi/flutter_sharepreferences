@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sharepreferences/counter_shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -8,6 +9,34 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _counter = 0;
+
+  void _getDataCounter() async {
+    _counter = await CounterSharedPreferences().getData();
+    setState(() {});
+  }
+
+  void _decrementCounter() async {
+    await CounterSharedPreferences().saveDate(--_counter);
+    _getDataCounter();
+  }
+
+  void _incrementCounter() async {
+    await CounterSharedPreferences().saveDate(++_counter);
+    _getDataCounter();
+  }
+
+  void _clearCounter() async {
+    await CounterSharedPreferences().removeData();
+    _getDataCounter();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getDataCounter();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,9 +53,9 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(
               height: 10,
             ),
-            const Text(
-              '3',
-              style: TextStyle(
+            Text(
+              '$_counter',
+              style: const TextStyle(
                 fontSize: 30,
               ),
             ),
@@ -37,15 +66,15 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: _decrementCounter,
                   icon: const Icon(Icons.remove),
-                  label: const Text('Omit'),
+                  label: const Text('Remove'),
                 ),
                 const SizedBox(
                   width: 10,
                 ),
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: _incrementCounter,
                   icon: const Icon(Icons.add),
                   label: const Text('Add'),
                 ),
@@ -55,7 +84,7 @@ class _HomePageState extends State<HomePage> {
               height: 10,
             ),
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: _clearCounter,
               icon: const Icon(Icons.delete_forever),
               label: const Text('Clear'),
             ),
